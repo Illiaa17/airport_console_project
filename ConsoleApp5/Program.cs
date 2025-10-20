@@ -8,28 +8,28 @@ class Program
       Console.WriteLine("Welcome to the airport");
       Console.ResetColor();
          
-      Console.Write("Виберіть точку А:");
+      Console.Write("Select a point A:");
       string cityA = Console.ReadLine();
          
-      Console.Write("Виберіть точку B:");
+      Console.Write("Select a point B:");
       string cityB = Console.ReadLine();
          
       Console.ForegroundColor = ConsoleColor.Yellow;
-      Console.WriteLine($"Ваш рейс: {cityA} - {cityB}");
+      Console.WriteLine($"Your flight: {cityA} - {cityB}");
       Console.ResetColor();
          
       Console.WriteLine();
-      Console.WriteLine("Класи польоту:");
-      Console.WriteLine("1. Економ");
-      Console.WriteLine("2. Середній");
-      Console.WriteLine("3. Бізнес");
-      Console.Write("Оберіть клас польоту:");
+      Console.WriteLine("Classes onboard:");
+      Console.WriteLine("1. Economy class");
+      Console.WriteLine("2. Comfort class");
+      Console.WriteLine("3. Bussiness class");
+      Console.Write("Select a flight class:");
       int classChoice = int.Parse(Console.ReadLine());
        
-      Console.Write("Вкажіть ваш вік:");
+      Console.Write("Enter your age:");
       int agePassenger = int.Parse(Console.ReadLine());
          
-      Console.Write("Кількість білетів:");
+      Console.Write("Select the number of tickets:");
       int tickets = int.Parse(Console.ReadLine());
          
       double basePrice = 100;
@@ -50,7 +50,11 @@ class Program
 
       double finalPrice = basePrice * classMultiplier * agePrice * tickets;
       Console.ForegroundColor = ConsoleColor.Magenta;
-      Console.WriteLine($"Загальна ціна: ${finalPrice}");
+      Console.WriteLine($"Total price: ${finalPrice}");
+      
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("Thank you for your purchases!");
+      Console.ResetColor();
    }
 
 
