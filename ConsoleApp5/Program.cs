@@ -47,7 +47,7 @@ namespace lab2_KN_23
             Console.WriteLine("3. Ticket Booking");
             Console.WriteLine("4. Flight Status");
             Console.WriteLine("5. Flight Search");
-            Console.WriteLine("6. Ticket Price Calculation (from Lab 1)");
+            Console.WriteLine("6. Ticket Price Calculation");
             Console.WriteLine("0. Exit");
             Console.ResetColor();
 
