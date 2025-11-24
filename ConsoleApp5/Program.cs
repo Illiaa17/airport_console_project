@@ -1,21 +1,116 @@
 ﻿using System;
 
-namespace lab2_KN_23
+namespace lab3_KN_23
 {
     class Program
     {
+
+        struct FlightManagement
+        {
+            public string flightNumber;
+            public string departure;
+            public string arrival;
+            public int seats;
+        }
+
+        struct PassengerRegistration
+        {
+            public string name;
+            public string passport;
+            public int age;
+        }
+
+        struct TicketBooking
+        {
+            public string bookingID;
+            public string flightNumber;
+            public string passengerName;
+        }
+
+        struct FlightStatusInfo
+        {
+            public string flightNumber;
+            public string status;
+            public string time;
+        }
+
+        struct FlightSearchInfo
+        {
+            public string departure;
+            public string arrival;
+            public string date;
+            public bool directFlight;
+        }
+
+        struct TicketPriceInfo
+        {
+            public string route;
+            public int age;
+            public int ticketCount;
+            public double totalPrice;
+        }
+        
+
+        static FlightManagement flight;
+        static PassengerRegistration passenger;
+        static TicketBooking booking;
+        static FlightStatusInfo flightStatus;
+        
+        
         public static void Main(string[] args)
         {
+            LoginSystem();
             RenderIntro();
             ShowMainMenu();
         }
+        
+
+        private static void LoginSystem()
+        {
+            string correctLogin = "airport";
+            string correctPass = "12345678";
+
+            int attempts = 0;
+
+            do
+            {
+                Console.Write("\nEnter login: ");
+                string login = Console.ReadLine();
+
+                Console.Write("Enter password: ");
+                string pass = Console.ReadLine();
+
+                if (login == correctLogin && pass == correctPass)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Login successful!\n");
+                    Console.ResetColor();
+                    return;
+                }
+                else
+                {
+                    attempts++;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Incorrect login or password.");
+                    Console.ResetColor();
+
+                    if (attempts == 3)
+                    {
+                        Console.WriteLine("Access denied. Program will close.");
+                        Environment.Exit(0);
+                    }
+                }
+
+            } while (true);
+        }
+        
 
         public static void RenderIntro()
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine("=========================================");
-            Console.WriteLine("========= WELCOME TO THE AIRPORT! =======");
-            Console.WriteLine("=========================================");
+            Console.WriteLine("============================================");
+            Console.WriteLine("========== WELCOME TO THE AIRPORT ==========");
+            Console.WriteLine("============================================");
             Console.ResetColor();
         }
 
@@ -28,7 +123,7 @@ namespace lab2_KN_23
             if (!isNumber)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You did not enter a valid number. Try again.");
+                Console.WriteLine("Invalid number! Try again.");
                 Console.ResetColor();
                 return GetUserInput(prompt);
             }
@@ -36,100 +131,147 @@ namespace lab2_KN_23
             Console.ResetColor();
             return choice;
         }
+        
 
         public static void ShowMainMenu()
         {
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("Main Menu:");
-            Console.WriteLine("1. Flight Management");
-            Console.WriteLine("2. Passenger Registration");
-            Console.WriteLine("3. Ticket Booking");
-            Console.WriteLine("4. Flight Status");
-            Console.WriteLine("5. Flight Search");
-            Console.WriteLine("6. Ticket Price Calculation");
-            Console.WriteLine("0. Exit");
-            Console.ResetColor();
-
-            double choice = GetUserInput("Select a menu option (0-6): ");
-
-            switch (choice)
+            while (true)
             {
-                case 1:
-                    ShowFlightMenu();
-                    break;
-                case 2:
-                    ShowPassengerMenu();
-                    break;
-                case 3:
-                    ShowBookingMenu();
-                    break;
-                case 4:
-                    ShowStatusMenu();
-                    break;
-                case 5:
-                    ShowSearchMenu();
-                    break;
-                case 6:
-                    TicketPrice(); 
-                    break;
-                case 0:
-                    Console.WriteLine("Exiting the program. Goodbye!");
-                    return;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid choice. Please try again.");
-                    Console.ResetColor();
-                    ShowMainMenu();
-                    break;
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine("Main Menu:");
+                Console.WriteLine("1. Flight Management");
+                Console.WriteLine("2. Passenger Registration");
+                Console.WriteLine("3. Ticket Booking");
+                Console.WriteLine("4. Flight Status");
+                Console.WriteLine("5. Flight Search");
+                Console.WriteLine("6. Ticket Price Calculation");
+                Console.WriteLine("7. View All Stored Data");
+                Console.WriteLine("0. Exit");
+                Console.ResetColor();
+
+                double choice = GetUserInput("Select a menu option (0-7): ");
+
+                switch (choice)
+                {
+                    case 1: ShowFlightMenu(); break;
+                    case 2: RegisterPassenger(); break;
+                    case 3: ShowBookingMenu(); break;
+                    case 4: ShowStatusMenu(); break;
+                    case 5: ShowSearchMenu(); break;
+                    case 6: TicketPrice(); break;
+                    case 7: ShowAllData(); break;
+                    case 0:
+                        Console.WriteLine("Exiting program. Goodbye!");
+                        return;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid choice! Try again.");
+                        Console.ResetColor();
+                        break;
+                }
             }
         }
+        
 
         private static void ShowFlightMenu()
         {
-            Console.WriteLine("\n=== Flight Management ===");
-            Console.WriteLine("1. Add Flight");
-            Console.WriteLine("2. View All Flights");
-            Console.WriteLine("3. Edit Flight");
-            Console.WriteLine("4. Delete Flight");
-            Console.WriteLine("5. Return to Main Menu");
+            Console.WriteLine("\n=== ADD NEW FLIGHT ===");
 
-            double choice = GetUserInput("Select an action (1-5): ");
+            Console.Write("Flight Number: ");
+            flight.flightNumber = Console.ReadLine();
 
-            if (choice >= 1 && choice <= 4)
+            Console.Write("Departure City: ");
+            flight.departure = Console.ReadLine();
+
+            Console.Write("Arrival City: ");
+            flight.arrival = Console.ReadLine();
+
+            Console.Write("Number of Seats: ");
+            bool ok = int.TryParse(Console.ReadLine(), out flight.seats);
+
+            if (!ok)
             {
-                Console.WriteLine("Function under development... Returning to flight menu.");
-                ShowFlightMenu();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid value! Flight not saved.");
+                Console.ResetColor();
+                return;
             }
-            else
-            {
-                ShowMainMenu();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Flight saved successfully.");
+            Console.ResetColor();
         }
+        
 
-        private static void ShowPassengerMenu()
+        private static void RegisterPassenger()
         {
-            Console.WriteLine("\nPassenger management function under development...");
-            ShowMainMenu();
+            Console.WriteLine("\n=== PASSENGER REGISTRATION ===");
+
+            Console.Write("Passenger Name: ");
+            passenger.name = Console.ReadLine();
+
+            Console.Write("Passport Number: ");
+            passenger.passport = Console.ReadLine();
+
+            Console.Write("Age: ");
+
+            while (!int.TryParse(Console.ReadLine(), out passenger.age))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid age! Try again.");
+                Console.ResetColor();
+                continue;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Passenger saved!");
+            Console.ResetColor();
         }
 
         private static void ShowBookingMenu()
         {
-            Console.WriteLine("\nTicket booking function under development...");
-            ShowMainMenu();
+            Console.WriteLine("\n=== TICKET BOOKING ===");
+
+            Console.Write("Booking ID: ");
+            booking.bookingID = Console.ReadLine();
+
+            Console.Write("Flight Number: ");
+            booking.flightNumber = Console.ReadLine();
+
+            Console.Write("Passenger Name: ");
+            booking.passengerName = Console.ReadLine();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Booking saved!");
+            Console.ResetColor();
         }
+        
 
         private static void ShowStatusMenu()
         {
-            Console.WriteLine("\nFlight status check function under development...");
-            ShowMainMenu();
+            Console.WriteLine("\n=== FLIGHT STATUS ===");
+
+            Console.Write("Flight Number: ");
+            flightStatus.flightNumber = Console.ReadLine();
+
+            Console.Write("Status (On Time / Delayed / Boarding): ");
+            flightStatus.status = Console.ReadLine();
+
+            Console.Write("Time: ");
+            flightStatus.time = Console.ReadLine();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Status saved!");
+            Console.ResetColor();
         }
+        
 
         private static void ShowSearchMenu()
         {
-            Console.WriteLine("\nFlight search function under development...");
-            ShowMainMenu();
+            Console.WriteLine("\nFlight search function is under development...");
         }
+        
 
         private static void TicketPrice()
         {
@@ -186,6 +328,17 @@ namespace lab2_KN_23
             Console.ResetColor();
 
             ShowMainMenu();
+        }
+        
+
+        private static void ShowAllData()
+        {
+            Console.WriteLine("\n=== STORED DATA ===");
+
+            Console.WriteLine($"Flight: {flight.flightNumber}, {flight.departure} -> {flight.arrival}, Seats: {flight.seats}");
+            Console.WriteLine($"Passenger: {passenger.name}, Passport: {passenger.passport}, Age: {passenger.age}");
+            Console.WriteLine($"Booking: {booking.bookingID}, Passenger: {booking.passengerName}, Flight: {booking.flightNumber}");
+            Console.WriteLine($"Status: {flightStatus.flightNumber}, {flightStatus.status}, Time: {flightStatus.time}");
         }
     }
 }
