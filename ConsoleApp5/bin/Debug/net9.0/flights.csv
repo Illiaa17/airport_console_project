@@ -1,1 +1,8 @@
 Id,FlightNumber,Departure,Arrival,Seats
+1,AB100,Kyiv,London,150
+2,BC200,Lviv,Berlin,100
+3,ZA999,Odesa,Paris,200
+4,PS789,Kyiv,Warsaw,180
+5,TK124,Istanbul,Kyiv,160
+6,LH254,Munich,Lviv,120
+7,AF112,Paris,Prague,140

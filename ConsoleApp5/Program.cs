@@ -1,6 +1,14 @@
-﻿using System;
-
+﻿// Copyright (c) AirportManager. All rights reserved.
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 namespace lab_KN_23
+    
+    /// <summary>
+    /// Представляє користувача системи.
+    /// </summary>
 {
     public class User
     {
@@ -8,17 +16,26 @@ namespace lab_KN_23
         public string Email { get; set; }
         public string PasswordHash { get; set; }
     }
-
+    
+    /// <summary>
+    /// Представляє інформацію про авіарейс.
+    /// </summary>
     public class Flight
     {
         public int Id { get; set; }
         public string FlightNumber { get; set; }
-        public string Departure { get; set; }
+        public string? Departure { get; set; }
         public string Arrival { get; set; }
         public int Seats { get; set; }
-
+        
+        /// <summary>
+        /// Конвертує об'єкт рейсу в рядок CSV.
+        /// </summary>
         public string ToCsv() => $"{Id},{FlightNumber},{Departure},{Arrival},{Seats}";
 
+        /// <summary>
+        /// Створює об'єкт рейсу з рядка CSV.
+        /// </summary>
         public static Flight FromCsv(string csvLine)
         {
             string[] v = csvLine.Split(',');
@@ -26,11 +43,14 @@ namespace lab_KN_23
         }
     }
 
+    /// <summary>
+    /// Представляє дані пасажира.
+    /// </summary>
     public class Passenger
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Passport { get; set; }
+        public string? Passport { get; set; }
         public int Age { get; set; }
 
         public string ToCsv() => $"{Id},{Name},{Passport},{Age}";
@@ -42,6 +62,9 @@ namespace lab_KN_23
         }
     }
 
+    /// <summary>
+    /// Модель бронювання квитка.
+    /// </summary>
     public class Booking
     {
         public int Id { get; set; }
@@ -57,45 +80,38 @@ namespace lab_KN_23
         }
     }
 
-    public class FlightStatus
-    {
-        public int Id { get; set; }
-        public string FlightNumber { get; set; }
-        public string Status { get; set; }
-        public string Time { get; set; }
-
-        public string ToCsv() => $"{Id},{FlightNumber},{Status},{Time}";
-
-        public static FlightStatus FromCsv(string csvLine)
-        {
-            string[] v = csvLine.Split(',');
-            return new FlightStatus { Id = int.Parse(v[0]), FlightNumber = v[1], Status = v[2], Time = v[3] };
-        }
-    }
     
+    
+    /// <summary>
+    /// Клас для роботи з файловою системою та збереження даних.
+    /// </summary>
     public static class FileManager
     {
         private const string FlightsFile = "flights.csv";
         private const string UsersFile = "users.csv";
         private const string PassFile = "passengers.csv";
         private const string BookFile = "bookings.csv";
-        private const string StatusFile = "statuses.csv";
-
+       
+        /// <summary>
+        /// Створює необхідні CSV файли, якщо вони відсутні.
+        /// </summary>
         public static void InitializeFiles()
         {
             CreateIfNotExists(FlightsFile, "Id,FlightNumber,Departure,Arrival,Seats");
             CreateIfNotExists(UsersFile, "Id,Email,PasswordHash");
             CreateIfNotExists(PassFile, "Id,Name,Passport,Age");
             CreateIfNotExists(BookFile, "Id,FlightNumber,PassengerName");
-            CreateIfNotExists(StatusFile, "Id,FlightNumber,Status,Time");
         }
-
+        
         private static void CreateIfNotExists(string path, string header)
         {
             if (!System.IO.File.Exists(path)) 
-                System.IO.File.WriteAllText(path, header + Environment.NewLine);
+                File.WriteAllText(path, header + Environment.NewLine);
         }
 
+        /// <summary>
+        /// Знаходить наступний доступний ID у файлі.
+        /// </summary>
         public static int GetNextId(string filePath)
         {
             try
@@ -133,8 +149,14 @@ namespace lab_KN_23
             System.IO.File.WriteAllText(filePath, content);
         }
         
+        /// <summary>
+        /// Читає список рейсів з файлу.
+        /// </summary>
         public static System.Collections.Generic.List<Flight> ReadFlights() => ReadData(FlightsFile, Flight.FromCsv);
 
+        /// <summary>
+        /// Читає список користувачів.
+        /// </summary>
         public static System.Collections.Generic.List<User> ReadUsers() => ReadData(UsersFile, line => {
             var v = line.Split(',');
             return new User { Id = int.Parse(v[0]), Email = v[1].Trim(), PasswordHash = v[2].Trim() };
@@ -142,8 +164,11 @@ namespace lab_KN_23
 
         public static System.Collections.Generic.List<Passenger> ReadPassengers() => ReadData(PassFile, Passenger.FromCsv);
         public static List<Booking> ReadBookings() => ReadData(BookFile, Booking.FromCsv);
-        public static System.Collections.Generic.List<FlightStatus> ReadStatuses() => ReadData(StatusFile, FlightStatus.FromCsv);
-
+        
+        
+        /// <summary>
+        /// Універсальний метод для читання даних з CSV.
+        /// </summary>
         private static System.Collections.Generic.List<T> ReadData<T>(string file, Func<string, T> mapper)
         {
             var list = new System.Collections.Generic.List<T>();
@@ -162,6 +187,9 @@ namespace lab_KN_23
             return list;
         }
 
+        /// <summary>
+        /// Перезаписує файл рейсів актуальними даними.
+        /// </summary>
         public static void RewriteFlights(System.Collections.Generic.List<Flight> list)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder("Id,FlightNumber,Departure,Arrival,Seats\n");
@@ -173,6 +201,9 @@ namespace lab_KN_23
         }
     }
     
+    /// <summary>
+    /// Забезпечує безпеку та хешування паролів.
+    /// </summary>
     public static class Security
     {
         public static string HashPassword(string password)
@@ -190,13 +221,21 @@ namespace lab_KN_23
         }
     }
     
+    /// <summary>
+    /// Головний клас програми для керування аеропортом.
+    /// </summary>
     class Program
     {
+        /// <summary>
+        /// Поточний авторизований користувач.
+        /// </summary>
         static User currentUser = null;
 
+        /// <summary>
+        /// Точка входу в програму.
+        /// </summary>
         public static void Main(string[] args)
         {
-            // Встановлення кодування для коректного відображення кирилиці в консолі
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.InputEncoding = System.Text.Encoding.UTF8;
 
@@ -214,6 +253,9 @@ namespace lab_KN_23
             }
         }
 
+        /// <summary>
+        /// Система авторизації та реєстрації.
+        /// </summary>
         private static void AuthSystem()
         {
             while (true)
@@ -232,6 +274,9 @@ namespace lab_KN_23
             }
         }
 
+        /// <summary>
+        /// Метод для входу в систему.
+        /// </summary>
         private static bool Login()
         {
             Console.Write("Логін: "); string email = Console.ReadLine();
@@ -262,6 +307,9 @@ namespace lab_KN_23
             return false;
         }
 
+        /// <summary>
+        /// Реєстрація нового користувача.
+        /// </summary>
         private static void Register()
         {
             Console.Write("Новий логін: "); string email = Console.ReadLine();
@@ -286,6 +334,9 @@ namespace lab_KN_23
             Console.WriteLine("Реєстрація успішна!");
         }
 
+        /// <summary>
+        /// Відображає вітальне повідомлення.
+        /// </summary>
         public static void RenderIntro()
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -295,6 +346,9 @@ namespace lab_KN_23
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Головне меню управління.
+        /// </summary>
         public static void ShowMainMenu()
         {
             while (true)
@@ -325,6 +379,9 @@ namespace lab_KN_23
             }
         }
         
+        /// <summary>
+        /// Меню операцій над рейсами.
+        /// </summary>
         private static void ShowFlightOperationsMenu()
         {
             while (true)
@@ -345,10 +402,9 @@ namespace lab_KN_23
                         Console.WriteLine("Рейс додано.");
                         break;
                     case "2": 
-                        // 1. Отримуємо список з файлу
+                        
                         var flights = FileManager.ReadFlights();
-
-                        // 2. Якщо у файлі нічого немає, додаємо ваші рейси вручну
+                        
                         if (flights.Count == 0)
                         {
                             flights.Add(new Flight { Id = 1, FlightNumber = "AB100", Departure = "Kyiv", Arrival = "London", Seats = 150 });
@@ -358,12 +414,10 @@ namespace lab_KN_23
                             flights.Add(new Flight { Id = 5, FlightNumber = "TK124", Departure = "Istanbul", Arrival = "Kyiv", Seats = 160 });
                             flights.Add(new Flight { Id = 6, FlightNumber = "LH254", Departure = "Munich", Arrival = "Lviv", Seats = 120 });
                             flights.Add(new Flight { Id = 7, FlightNumber = "AF112", Departure = "Paris", Arrival = "Prague", Seats = 140 });
-
-                            // (Опціонально) Зберігаємо їх у файл, щоб вони там були і наступного разу
+                            
                             FileManager.RewriteFlights(flights);
                         }
-
-                        // 3. Відображаємо фінальний список
+                        
                         Console.WriteLine("\n--- ДОСТУПНІ РЕЙСИ ---");
                         RenderFlights(flights); 
                         break;
@@ -373,61 +427,19 @@ namespace lab_KN_23
             }
         }
 
+        /// <summary>
+        /// Виводить список рейсів у табличному форматі.
+        /// </summary>
         private static void RenderFlights(System.Collections.Generic.List<Flight> list)
         {
             Console.WriteLine($"\n{"ID",-3} {"Номер",-10} {"Звідки",-15} {"Куди",-15} {"Місць",-5}");
             foreach (var f in list)
                 Console.WriteLine($"{f.Id,-3} {f.FlightNumber,-10} {f.Departure,-15} {f.Arrival,-15} {f.Seats,-5}");
         }
-
-        private static void EditFlight()
-        {
-            Console.Write("ID рейсу для редагування: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
-            {
-                var list = FileManager.ReadFlights();
-                Flight f = null;
-                foreach (var item in list)
-                {
-                    if (item.Id == id)
-                    {
-                        f = item;
-                        break;
-                    }
-                }
-
-                if (f != null)
-                {
-                    Console.Write($"Новий пункт вильоту ({f.Departure}): "); string d = Console.ReadLine();
-                    if (!string.IsNullOrEmpty(d)) f.Departure = d;
-                    Console.Write($"Новий пункт прибуття ({f.Arrival}): "); string a = Console.ReadLine();
-                    if (!string.IsNullOrEmpty(a)) f.Arrival = a;
-                    FileManager.RewriteFlights(list);
-                    Console.WriteLine("Оновлено.");
-                }
-                else Console.WriteLine("Рейс не знайдено.");
-            }
-        }
-
-        private static void ShowStats()
-        {
-            var list = FileManager.ReadFlights();
-            if (list.Count == 0) return;
-
-            double sum = 0;
-            int max = 0;
-
-            foreach (var f in list)
-            {
-                sum += f.Seats;
-                if (f.Seats > max) max = f.Seats;
-            }
-
-            double avg = sum / list.Count;
-
-            Console.WriteLine($"Всього рейсів: {list.Count}, Сер. кількість місць: {avg:F1}, Макс: {max}");
-        }
         
+        /// <summary>
+        /// Реєстрація нового пасажира.
+        /// </summary>
         private static void RegisterPassenger()
         {
             Console.WriteLine("\n--- НОВИЙ ПАСАЖИР ---");
@@ -441,19 +453,48 @@ namespace lab_KN_23
             Console.WriteLine("Дані пасажира збережено!");
         }
         
+        /// <summary>
+        /// Створення нового бронювання.
+        /// </summary>
         private static void BookTicket()
         {
             Console.WriteLine("\n--- НОВЕ БРОНЮВАННЯ ---");
-            RenderFlights(FileManager.ReadFlights());
+            
+            var flights = FileManager.ReadFlights();
+            
+            if (flights.Count == 0)
+            {
+                flights.Add(new Flight { Id = 1, FlightNumber = "AB100", Departure = "Kyiv", Arrival = "London", Seats = 150 });
+                flights.Add(new Flight { Id = 2, FlightNumber = "BC200", Departure = "Lviv", Arrival = "Berlin", Seats = 100 });
+                flights.Add(new Flight { Id = 3, FlightNumber = "ZA999", Departure = "Odesa", Arrival = "Paris", Seats = 200 });
+                flights.Add(new Flight { Id = 4, FlightNumber = "PS789", Departure = "Kyiv", Arrival = "Warsaw", Seats = 180 });
+                flights.Add(new Flight { Id = 5, FlightNumber = "TK124", Departure = "Istanbul", Arrival = "Kyiv", Seats = 160 });
+                flights.Add(new Flight { Id = 6, FlightNumber = "LH254", Departure = "Munich", Arrival = "Lviv", Seats = 120 });
+                flights.Add(new Flight { Id = 7, FlightNumber = "AF112", Departure = "Paris", Arrival = "Prague", Seats = 140 });
+
+                FileManager.RewriteFlights(flights);
+            }
+            
+            RenderFlights(flights);
 
             Booking b = new Booking();
-            Console.Write("Введіть номер рейсу зі списку: "); b.FlightNumber = Console.ReadLine();
-            Console.Write("Ім'я пасажира: "); b.PassengerName = Console.ReadLine();
+            Console.Write("\nВведіть номер рейсу зі списку: "); 
+            b.FlightNumber = Console.ReadLine();
+    
+            Console.Write("Ім'я пасажира: "); 
+            b.PassengerName = Console.ReadLine();
 
             b.Id = FileManager.GetNextId("bookings.csv");
             FileManager.AppendLine("bookings.csv", b.ToCsv());
+    
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Бронювання успішне!");
+            Console.ResetColor();
         }
+        
+        /// <summary>
+        /// Пошук рейсів за містом або номером.
+        /// </summary>
         private static void SearchMenu()
         {
             Console.Write("Пошуковий запит (Місто/Номер): ");
@@ -475,6 +516,9 @@ namespace lab_KN_23
             else Console.WriteLine("Рейсів не знайдено.");
         }
         
+        /// <summary>
+        /// Калькулятор вартості квитка з урахуванням класу та віку.
+        /// </summary>
         private static void TicketPrice()
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -523,6 +567,9 @@ namespace lab_KN_23
             Console.ResetColor();
         }
         
+        /// <summary>
+        /// Перегляд усіх збережених даних у системі.
+        /// </summary>
         private static void ViewAllData()
         {
             
