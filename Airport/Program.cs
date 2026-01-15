@@ -352,13 +352,13 @@ namespace lab_KN_23
                             
                             FileManager.RewriteFlights(systemFlights);
                         }
-                        Console.WriteLine("\n=== СИСТЕМНІ РЕЙСИ (flights.csv) ===");
+                        Console.WriteLine("\n=== СИСТЕМНІ РЕЙСИ ===");
                         RenderFlights(systemFlights);
 
                         // 2. Обробка доданих рейсів
                         var userFlights = FileManager.ReadAddedFlights();
                 
-                        Console.WriteLine("\n=== ДОДАНІ ВАМИ РЕЙСИ (addflights.csv) ===");
+                        Console.WriteLine("\n=== ДОДАНІ ВАМИ РЕЙСИ ===");
                         if (userFlights.Count > 0)
                         {
                             RenderFlights(userFlights);
