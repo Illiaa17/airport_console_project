@@ -7,46 +7,6 @@ using System.Text;
 namespace lab_KN_23
 
 {
-
-    /// <summary>
-    /// Представляє дані пасажира.
-    /// </summary>
-    public class Passenger
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string? Passport { get; set; }
-        public int Age { get; set; }
-
-        public string ToCsv() => $"{Id},{Name},{Passport},{Age}";
-
-        public static Passenger FromCsv(string csvLine)
-        {
-            string[] v = csvLine.Split(',');
-            return new Passenger { Id = int.Parse(v[0]), Name = v[1], Passport = v[2], Age = int.Parse(v[3]) };
-        }
-    }
-
-    /// <summary>
-    /// Модель бронювання квитка.
-    /// </summary>
-    public class Booking
-    {
-        public int Id { get; set; }
-        public string FlightNumber { get; set; }
-        public string PassengerName { get; set; }
-
-        public string ToCsv() => $"{Id},{FlightNumber},{PassengerName}";
-
-        public static Booking FromCsv(string csvLine)
-        {
-            string[] v = csvLine.Split(',');
-            return new Booking { Id = int.Parse(v[0]), FlightNumber = v[1], PassengerName = v[2] };
-        }
-    }
-
-    
-    
     /// <summary>
     /// Клас для роботи з файловою системою та збереження даних.
     /// </summary>
@@ -364,6 +324,8 @@ namespace lab_KN_23
                         Console.Write("Номер рейсу: "); f.FlightNumber = Console.ReadLine();
                         Console.Write("Звідки: "); f.Departure = Console.ReadLine();
                         Console.Write("Куди: "); f.Arrival = Console.ReadLine();
+                        f.Id = FileManager.GetNextId("addflights.csv");
+                        FileManager.AppendLine("addflights.csv", f.ToCsv());
                         Console.WriteLine("Рейс додано.");
                         break;
                     case "2": 
@@ -371,6 +333,7 @@ namespace lab_KN_23
                         var flights = FileManager.ReadFlights();
                         
                         if (flights.Count == 0)
+                            
                         {
                             flights.Add(new Flight { Id = 1, FlightNumber = "AB100", Departure = "Kyiv", Arrival = "London", Seats = 150 });
                             flights.Add(new Flight { Id = 2, FlightNumber = "BC200", Departure = "Lviv", Arrival = "Berlin", Seats = 100 });

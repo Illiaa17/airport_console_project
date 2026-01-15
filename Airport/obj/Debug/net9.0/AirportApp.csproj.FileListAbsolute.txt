@@ -1,0 +1,15 @@
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/bin/Debug/net9.0/AirportApp
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/bin/Debug/net9.0/AirportApp.deps.json
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/bin/Debug/net9.0/AirportApp.runtimeconfig.json
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/bin/Debug/net9.0/AirportApp.dll
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/bin/Debug/net9.0/AirportApp.pdb
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.GeneratedMSBuildEditorConfig.editorconfig
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.AssemblyInfoInputs.cache
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.AssemblyInfo.cs
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.csproj.CoreCompileInputs.cache
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.sourcelink.json
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.dll
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/refint/AirportApp.dll
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.pdb
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/AirportApp.genruntimeconfig.cache
+/Users/illiapaidych/RiderProjects/ConsoleApp5/Airport/obj/Debug/net9.0/ref/AirportApp.dll
