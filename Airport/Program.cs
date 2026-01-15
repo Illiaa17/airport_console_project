@@ -16,6 +16,7 @@ namespace lab_KN_23
         private const string UsersFile = "users.csv";
         private const string PassFile = "passengers.csv";
         private const string BookFile = "bookings.csv";
+        private const string AddFlightsFile = "addflights.csv";
        
         /// <summary>
         /// Створює необхідні CSV файли, якщо вони відсутні.
@@ -26,6 +27,7 @@ namespace lab_KN_23
             CreateIfNotExists(UsersFile, "Id,Email,PasswordHash");
             CreateIfNotExists(PassFile, "Id,Name,Passport,Age");
             CreateIfNotExists(BookFile, "Id,FlightNumber,PassengerName");
+            CreateIfNotExists(AddFlightsFile, "FlightNumber,Departure,Arrival");
         }
         
         private static void CreateIfNotExists(string path, string header)
@@ -78,7 +80,10 @@ namespace lab_KN_23
         /// Читає список рейсів з файлу.
         /// </summary>
         public static System.Collections.Generic.List<Flight> ReadFlights() => ReadData(FlightsFile, Flight.FromCsv);
-
+        /// <summary>
+        /// Читає список доданих рейсів з файлу.
+        /// </summary>
+        public static System.Collections.Generic.List<Flight> ReadAddedFlights() => ReadData(AddFlightsFile, Flight.FromCsv);
         /// <summary>
         /// Читає список користувачів.
         /// </summary>
@@ -324,33 +329,50 @@ namespace lab_KN_23
                         Console.Write("Номер рейсу: "); f.FlightNumber = Console.ReadLine();
                         Console.Write("Звідки: "); f.Departure = Console.ReadLine();
                         Console.Write("Куди: "); f.Arrival = Console.ReadLine();
+                        Console.Write("Кількість місць: "); 
+                        int.TryParse(Console.ReadLine(), out int seats); f.Seats = seats;
                         f.Id = FileManager.GetNextId("addflights.csv");
                         FileManager.AppendLine("addflights.csv", f.ToCsv());
+                        
                         Console.WriteLine("Рейс додано.");
                         break;
                     case "2": 
                         
-                        var flights = FileManager.ReadFlights();
-                        
-                        if (flights.Count == 0)
+                        var systemFlights = FileManager.ReadFlights();
+                        if (systemFlights.Count == 0)
                             
                         {
-                            flights.Add(new Flight { Id = 1, FlightNumber = "AB100", Departure = "Kyiv", Arrival = "London", Seats = 150 });
-                            flights.Add(new Flight { Id = 2, FlightNumber = "BC200", Departure = "Lviv", Arrival = "Berlin", Seats = 100 });
-                            flights.Add(new Flight { Id = 3, FlightNumber = "ZA999", Departure = "Odesa", Arrival = "Paris", Seats = 200 });
-                            flights.Add(new Flight { Id = 4, FlightNumber = "PS789", Departure = "Kyiv", Arrival = "Warsaw", Seats = 180 });
-                            flights.Add(new Flight { Id = 5, FlightNumber = "TK124", Departure = "Istanbul", Arrival = "Kyiv", Seats = 160 });
-                            flights.Add(new Flight { Id = 6, FlightNumber = "LH254", Departure = "Munich", Arrival = "Lviv", Seats = 120 });
-                            flights.Add(new Flight { Id = 7, FlightNumber = "AF112", Departure = "Paris", Arrival = "Prague", Seats = 140 });
+                            systemFlights.Add(new Flight { Id = 1, FlightNumber = "AB100", Departure = "Kyiv", Arrival = "London", Seats = 150 });
+                            systemFlights.Add(new Flight { Id = 2, FlightNumber = "BC200", Departure = "Lviv", Arrival = "Berlin", Seats = 100 });
+                            systemFlights.Add(new Flight { Id = 3, FlightNumber = "ZA999", Departure = "Odesa", Arrival = "Paris", Seats = 200 });
+                            systemFlights.Add(new Flight { Id = 4, FlightNumber = "PS789", Departure = "Kyiv", Arrival = "Warsaw", Seats = 180 });
+                            systemFlights.Add(new Flight { Id = 5, FlightNumber = "TK124", Departure = "Istanbul", Arrival = "Kyiv", Seats = 160 });
+                            systemFlights.Add(new Flight { Id = 6, FlightNumber = "LH254", Departure = "Munich", Arrival = "Lviv", Seats = 120 });
+                            systemFlights.Add(new Flight { Id = 7, FlightNumber = "AF112", Departure = "Paris", Arrival = "Prague", Seats = 140 });
                             
-                            FileManager.RewriteFlights(flights);
+                            FileManager.RewriteFlights(systemFlights);
                         }
+                        Console.WriteLine("\n=== СИСТЕМНІ РЕЙСИ (flights.csv) ===");
+                        RenderFlights(systemFlights);
+
+                        // 2. Обробка доданих рейсів
+                        var userFlights = FileManager.ReadAddedFlights();
+                
+                        Console.WriteLine("\n=== ДОДАНІ ВАМИ РЕЙСИ (addflights.csv) ===");
+                        if (userFlights.Count > 0)
+                        {
+                            RenderFlights(userFlights);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Додані рейси відсутні.");
+                        }
+                        break; 
+
+                    case "0": return; 
+                    default: Console.WriteLine("Невірний вибір."); break;
                         
-                        Console.WriteLine("\n--- ДОСТУПНІ РЕЙСИ ---");
-                        RenderFlights(flights); 
-                        break;
-                       
-                    case "0": return;
+                    
                 }
             }
         }
