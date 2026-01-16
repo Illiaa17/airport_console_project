@@ -27,7 +27,7 @@ namespace lab_KN_23
             CreateIfNotExists(UsersFile, "Id,Email,PasswordHash");
             CreateIfNotExists(PassFile, "Id,Name,Passport,Age");
             CreateIfNotExists(BookFile, "Id,FlightNumber,PassengerName");
-            CreateIfNotExists(AddFlightsFile, "FlightNumber,Departure,Arrival");
+            CreateIfNotExists(AddFlightsFile, "Id,FlightNumber,Departure,Arrival,Seats");
         }
         
         private static void CreateIfNotExists(string path, string header)
